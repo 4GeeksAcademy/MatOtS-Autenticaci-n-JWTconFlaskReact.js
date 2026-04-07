@@ -1,11 +1,10 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { Link, useNavigate, Navigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import rigoImageUrl from "../assets/img/rigo-baby.jpg";
 import useGlobalReducer from "../hooks/useGlobalReducer";
 
 export const SignUp = () => {
   const { store, dispatch } = useGlobalReducer()
-
   const urlApi = import.meta.env.VITE_BACKEND_URL
   const [email, setEmail] = useState("")
   const [pw, setPw] = useState("")
@@ -31,7 +30,7 @@ export const SignUp = () => {
       }
       setTimeout(() => {
         if (response.ok) {
-          navigate('/login');
+          navigate('/privatePage');
         }
       }, 1000);
     }
@@ -40,26 +39,44 @@ export const SignUp = () => {
     }
   }
 
+  useEffect(() => {
+    if (localStorage.getItem("userAuth") === "true") {
+      dispatch({ type: "ADD_LOGIN_STATUS", payload: localStorage.getItem("userAuth") })
+    }
+  }, [])
+
   return (
-    <div className="container row mx-auto mt-5">
-      <div className="col-4 ms-5">
-        <img src={rigoImageUrl} alt="" style={{ width: "100%" }} />
-      </div>
-      <div className="col-8 pt-4 w-50">
-        <h2 className="d-flex justify-content-center mb-5">Register to MyApp</h2>
-        <form onSubmit={signUpUser}>
-          <div className="mb-3">
-            <label htmlFor="exampleInputEmail1" className="form-label">Email address</label>
-            <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" onChange={(e) => setEmail(e.target.value)} value={email} />
-            <div id="emailHelp" className="form-text">We'll never share your email with anyone else.</div>
+    <>
+      {store.userAuth === "true" ?
+        <Navigate to="/privatePage" />
+        :
+        null }
+      <div className="container row mx-auto mt-5">
+        <div className="col-4 ms-5">
+          <img src={rigoImageUrl} alt="" style={{ width: "100%" }} />
+        </div>
+        <div className="col-8 pt-4 w-50">
+          <h2 className="d-flex justify-content-center mb-5">Register to MyApp</h2>
+          <form onSubmit={signUpUser}>
+            <div className="mb-3">
+              <label htmlFor="exampleInputEmail1" className="form-label">Email address</label>
+              <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" onChange={(e) => setEmail(e.target.value)} value={email} />
+              <div id="emailHelp" className="form-text">We'll never share your email with anyone else.</div>
+            </div>
+            <div className="mb-3">
+              <label htmlFor="exampleInputPassword1" className="form-label">Password</label>
+              <input type="password" className="form-control" id="exampleInputPassword1" onChange={(e) => setPw(e.target.value)} value={pw} />
+            </div>
+            <button type="submit" className="btn btn-primary d-grid gap-2 col-6 mx-auto" onClick={signUpUser}>Sign Up</button>
+          </form>
+          <div className="d-flex p-3 gap-4 align-items-center">
+            <p>Already have an accout?</p>
+            <Link to="/login">
+              <button className="btn btn-primary">Login</button>
+            </Link>
           </div>
-          <div className="mb-3">
-            <label htmlFor="exampleInputPassword1" className="form-label">Password</label>
-            <input type="password" className="form-control" id="exampleInputPassword1" onChange={(e) => setPw(e.target.value)} value={pw} />
-          </div>
-          <button type="submit" className="btn btn-primary d-grid gap-2 col-6 mx-auto" onClick={signUpUser}>Sign Up</button>
-        </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 };

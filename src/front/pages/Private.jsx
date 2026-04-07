@@ -4,13 +4,10 @@ import { useEffect, useState } from "react";
 
 export const Private = () => {
   const { store, dispatch } = useGlobalReducer()
-  console.log(store);
-  
   const navigate = useNavigate()
   const [tokenApi, setTokenApi] = useState("")
   const urlApi = import.meta.env.VITE_BACKEND_URL
   const [isLogged, setIsLogged] = useState(false)
-
 
   useEffect(() => {
     setTokenApi(localStorage.getItem("token"))
@@ -19,9 +16,17 @@ export const Private = () => {
   useEffect(() => {
     if (tokenApi != "") {
       authUser();
-      dispatch({ type: "ADD_LOGIN_STATUS", payload: isLogged })
     }
   }, [tokenApi])
+
+  useEffect(()=> {
+    if (localStorage.getItem("userAuth") == true) {
+      setIsLogged(localStorage.getItem("userAuth"))
+    }
+    if (localStorage.getItem("token") != null && localStorage.getItem("token") != "") {
+      setTokenApi(localStorage.getItem("token"))
+    }
+  },[])
 
   async function authUser() {
     try {
@@ -38,6 +43,7 @@ export const Private = () => {
       }
       setIsLogged(response.ok)
       dispatch({ type: "ADD_LOGIN_STATUS", payload: response.ok })
+      localStorage.setItem("userAuth", response.ok)
     }
 
     catch (error) {
