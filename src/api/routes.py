@@ -33,11 +33,9 @@ def login_user():
     if email == None or password == None:
         return jsonify({"msg": "Bad email or password"}), 401
     for user in users:
-        if email in user.email:
+        if email in user.email and password == user.password:
             access_token = create_access_token(identity=email)
             return jsonify(access_token=access_token), 200
-
-    print(access_token)
 
     return jsonify({"msg": "Bad email or password"}), 401
 
@@ -64,6 +62,7 @@ def signUp_user():
 def protected():
     current_user_email = get_jwt_identity()
     userDb = db.session.execute(select(User).where(User.email == current_user_email)).scalars().all()
+    
     user = db.session.get(User, userDb[0].id)
 
     return jsonify({
