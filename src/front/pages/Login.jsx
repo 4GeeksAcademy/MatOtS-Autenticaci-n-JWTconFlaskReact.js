@@ -33,7 +33,6 @@ export const Login = () => {
         throw new Error("Error on post fetch, status: ", response.status)
       }
       const token = (await response.json()).access_token
-      console.log("que mierda pasa", token);
       setTokenApi(token)
       localStorage.setItem("token", token)
       dispatch({ type: "ADD_TOKEN", payload: token })
