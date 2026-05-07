@@ -15,8 +15,6 @@ export const Login = () => {
 
   async function loginUser(e) {
     e.preventDefault();
-    console.log(email);
-    console.log(pw);
     try {
       const response = await fetch(`${urlApi}/api/login`, {
         method: "POST",
